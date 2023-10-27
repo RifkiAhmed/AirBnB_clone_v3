@@ -38,15 +38,14 @@ def delete_state(state_id):
 @app_views.route('/states', strict_slashes=False, methods=['POST'])
 def create_state():
     """creates a State"""
-    try:
-        data = request.get_json()
-        if "name" not in data:
-            abort(make_response(jsonify("Missing name"), 400))
-        state = State(**data)
-        state.save()
-        return make_response(jsonify(state.to_dict()), 201)
-    except TypeError:
+    data = request.get_json()
+    if not isinstance(data, dict):
         abort(make_response(jsonify("Not a JSON"), 400))
+    if "name" not in data:
+        abort(make_response(jsonify("Missing name"), 400))
+    state = State(**data)
+    state.save()
+    return make_response(jsonify(state.to_dict()), 201)
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'])
@@ -55,14 +54,13 @@ def update_state(state_id):
     ignored_keys = ['id', 'created_at', 'updated_at']
     state = storage.get(State, state_id)
     if state:
-        try:
-            data = request.get_json()
-            for key, value in data.items():
-                if key not in ignored_keys:
-                    setattr(state, key, value)
-            storage.save()
-            return make_response(jsonify(state.to_dict()), 200)
-        except TypeError:
+        data = request.get_json()
+        if not isinstance(data, dict):
             abort(make_response(jsonify("Not a JSON"), 400))
+        for key, value in data.items():
+            if key not in ignored_keys:
+                setattr(state, key, value)
+        storage.save()
+        return make_response(jsonify(state.to_dict()), 200)
     else:
         abort(404)
