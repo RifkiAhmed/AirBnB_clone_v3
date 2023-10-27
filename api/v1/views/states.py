@@ -34,18 +34,16 @@ def delete_state(state_id):
     else:
         abort(404)
 
-
 @app_views.route('/states', strict_slashes=False, methods=['POST'])
 def create_state():
-    """creates a State"""
     data = request.get_json()
-    if not isinstance(data, dict):
-        abort(make_response(jsonify("Not a JSON"), 400))
-    if "name" not in data:
-        abort(make_response(jsonify("Missing name"), 400))
+    if type(data) != dict:
+        return abort(400, {'message': 'Not a JSON'})
+    if 'name' not in data:
+        return abort(400, {'message': 'Missing name'})
     state = State(**data)
     state.save()
-    return make_response(jsonify(state.to_dict()), 201)
+    return jsonify(state.to_dict()), 201
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'])
@@ -55,12 +53,12 @@ def update_state(state_id):
     state = storage.get(State, state_id)
     if state:
         data = request.get_json()
-        if not isinstance(data, dict):
-            abort(make_response(jsonify("Not a JSON"), 400))
+        if type(data) != dict:
+            return abort(400, {'message': 'Not a JSON'})
         for key, value in data.items():
             if key not in ignored_keys:
                 setattr(state, key, value)
         storage.save()
-        return make_response(jsonify(state.to_dict()), 200)
+        return jsonify(state.to_dict()), 200
     else:
         abort(404)
