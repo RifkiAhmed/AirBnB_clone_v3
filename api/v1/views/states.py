@@ -60,7 +60,7 @@ def update_state(state_id):
             for key, value in data.items():
                 if key not in ignored_keys:
                     setattr(state, key, value)
-            state.save()
+            storage.save()
             return make_response(jsonify(state.to_dict()), 200)
         except TypeError:
             abort(make_response(jsonify("Not a JSON"), 400))
