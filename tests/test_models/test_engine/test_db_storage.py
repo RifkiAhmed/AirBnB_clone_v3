@@ -87,3 +87,23 @@ test_db_storage.py'])
         count2 = storage.count()
         self.assertTrue(count2 == count1 + 1)
         self.assertTrue(storage.count(State) > state_count1)
+
+
+class TestFileStorage(unittest.TestCase):
+    """Test the FileStorage class"""
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_all_returns_dict(self):
+        """Test that all returns a dictionaty"""
+        self.assertIs(type(models.storage.all()), dict)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_all_no_class(self):
+        """Test that all returns all rows when no class is passed"""
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_new(self):
+        """test that new adds an object to the database"""
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_save(self):
+        """Test that save properly saves objects to file.json"""
