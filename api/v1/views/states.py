@@ -46,3 +46,22 @@ def create_state():
         return make_response(jsonify(state.to_dict()), 201)
     except TypeError:
         abort(make_response(jsonify("Not a JSON"), 400))
+
+
+@app_views.route('/states/<state_id>', methods=['PUT'])
+def update_state(state_id):
+    """updates a State object"""
+    ignored_keys = ['id', 'created_at', 'updated_at']
+    state = storage.get(State, state_id)
+    if state:
+        try:
+            data = request.get_json()
+            for key, value in data.items():
+                if key not in ignored_keys:
+                    setattr(state, key, value)
+            state.save()
+            return make_response(jsonify(state.to_dict()), 200)
+        except TypeError:
+            abort(make_response(jsonify("Not a JSON"), 400))
+    else:
+        abort(404)
