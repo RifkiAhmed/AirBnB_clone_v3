@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """State view"""
 from api.v1.views import app_views
-from flask import abort, make_response, jsonify
+from flask import abort, make_response, jsonify, request
 from models.state import State
 from models import storage
 
@@ -13,7 +13,7 @@ def get_states():
     return [state.to_dict() for state in states.values()]
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False, methods=['GET'])
+@app_views.route('/states/<state_id>', methods=['GET'])
 def get_state(state_id):
     """retrieves a State object"""
     state = storage.get(State, state_id)
@@ -23,7 +23,7 @@ def get_state(state_id):
         abort(404)
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False, methods=['DELETE'])
+@app_views.route('/states/<state_id>', methods=['DELETE'])
 def delete_state(state_id):
     """deletes a State object"""
     state = storage.get('State', state_id)
@@ -32,3 +32,17 @@ def delete_state(state_id):
         return make_response(jsonify({}), 200)
     else:
         abort(404)
+
+
+@app_views.route('/states', strict_slashes=False, methods=['POST'])
+def create_state():
+    """creates a State"""
+    try:
+        data = request.get_json()
+        if "name" not in data:
+            abort(make_response(jsonify("Missing name"), 400))
+        state = State(**data)
+        state.save()
+        return make_response(jsonify(state.to_dict()), 201)
+    except TypeError:
+        abort(make_response(jsonify("Not a JSON"), 400))
