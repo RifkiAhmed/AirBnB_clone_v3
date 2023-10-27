@@ -14,6 +14,7 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
+from models import storage
 import json
 import os
 import pep8
@@ -69,7 +70,6 @@ test_db_storage.py'])
 
     def test_dbs_func_get(self):
         """Test for the get() methods"""
-        storage = DBStorage()
         new_state1 = State({"name": "Rabat"})
         new_state1.save()
         state = storage.get(State, new_state1.id)
@@ -79,7 +79,6 @@ test_db_storage.py'])
 
     def test_dbs_func_count(self):
         """Test for the count() methods"""
-        storage = DBStorage()
         count1 = storage.count()
         state_count1 = storage.count(State)
         self.assertTrue(count1 >= 0)
@@ -87,24 +86,4 @@ test_db_storage.py'])
         state.save()
         count2 = storage.count()
         self.assertTrue(count2 == count1 + 1)
-        self.asserTrue(storage.count(State) > state_count1)
-
-
-class TestFileStorage(unittest.TestCase):
-    """Test the FileStorage class"""
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_all_returns_dict(self):
-        """Test that all returns a dictionaty"""
-        self.assertIs(type(models.storage.all()), dict)
-
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_all_no_class(self):
-        """Test that all returns all rows when no class is passed"""
-
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_new(self):
-        """test that new adds an object to the database"""
-
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_save(self):
-        """Test that save properly saves objects to file.json"""
+        self.assertTrue(storage.count(State) > state_count1)
