@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 """Place view"""
 from api.v1.views import app_views
-from flask import abort, jsonify, make_response
+from flask import abort, jsonify, make_response, request
 from models.place import Place
 from models.city import City
+from models.user import User
 from models import storage
 
 
@@ -37,3 +38,31 @@ def delete_place(place_id):
         return make_response(jsonify({}), 200)
     else:
         abort(404)
+
+
+@app_views.route(
+        '/cities/<city_id>/places', strict_slashes=False, methods=['POST'])
+def create_place(city_id):
+    """creates a Place object"""
+    city = storage.get(City, city_id)
+    if not city:
+        abort(404)
+    try:
+        data = request.get_json()
+        if 'user_id' not in data:
+            raise KeyError('Missing user_id')
+        user = storage.get(User, data.get('user_id'))
+        if not user:
+            raise ValueError
+        if 'name' not in data:
+            raise KeyError('Missing name')
+        data['city_id'] = city_id
+        place = Place(**data)
+        place.save()
+        return make_response(jsonify(place.to_dict()), 201)
+    except KeyError as error:
+        abort(400, description=error.args[0])
+    except ValueError:
+        abort(404)
+    except Exception:
+        abort(400, description='Not a JSON')
