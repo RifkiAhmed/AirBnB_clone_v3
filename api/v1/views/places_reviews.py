@@ -67,3 +67,21 @@ def create_review(place_id):
         abort(404)
     except Exception:
         abort(400, description='Not a JSON')
+
+
+@app_views.route('/reviews/<review_id>', methods=['PUT'])
+def update_review(review_id):
+    """updates a Review object"""
+    ignored_keys = ['id', 'user_id', 'place_id', 'created_at', 'updated_at']
+    review = storage.get(Review, review_id)
+    if not review:
+        abort(404)
+    try:
+        data = request.get_json()
+        for key, value in data.items():
+            if key not in ignored_keys:
+                setattr(review, key, value)
+        storage.save()
+        return make_response(jsonify(review.to_dict()), 200)
+    except Exception:
+        abort(400, description='Not a JSON')
