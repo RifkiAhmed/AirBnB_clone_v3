@@ -66,3 +66,21 @@ def create_place(city_id):
         abort(404)
     except Exception:
         abort(400, description='Not a JSON')
+
+
+@app_views.route('/places/<place_id>', methods=['PUT'])
+def update_place(place_id):
+    """updates a Place object"""
+    ignored_keys = ['id', 'user_id', 'city_id', 'created_at', 'updated_at']
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(404)
+    try:
+        data = request.get_json()
+        for key, value in data.items():
+            if key not in ignored_keys:
+                setattr(place, key, value)
+        storage.save()
+        return make_response(jsonify(place.to_dict()), 200)
+    except Exception:
+        abort(400, description='Not a JSON')
