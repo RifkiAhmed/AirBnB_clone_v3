@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Review view"""
 from api.v1.views import app_views
-from flask import abort, jsonify
+from flask import abort, jsonify, make_response
 from models.place import Place
 from models.review import Review
 from models import storage
@@ -24,5 +24,17 @@ def get_review(review_id):
     review = storage.get(Review, review_id)
     if review:
         return jsonify(review.to_dict())
+    else:
+        abort(404)
+
+
+@app_views.route('/reviews/<review_id>', methods=['DELETE'])
+def delete_review(review_id):
+    """deletes a Review object"""
+    review = storage.get(Review, review_id)
+    if review:
+        storage.delete(review)
+        storage.save()
+        return make_response(jsonify({}), 200)
     else:
         abort(404)
