@@ -7,7 +7,8 @@ from models.city import City
 from models import storage
 
 
-@app_views.route('/states/<state_id>/cities', methods=['GET'])
+@app_views.route(
+        '/states/<state_id>/cities', strict_slashes=False, methods=['GET'])
 def get_cities(state_id):
     """retrieves the list of all cities related to a State object"""
     state = storage.get(State, state_id)
@@ -39,7 +40,8 @@ def delete_city(city_id):
         abort(404)
 
 
-@app_views.route('/states/<state_id>/cities', methods=['POST'])
+@app_views.route(
+        '/states/<state_id>/cities', strict_slashes=False, methods=['POST'])
 def create_city(state_id):
     """creates a new City object"""
     state = storage.get(State, state_id)
