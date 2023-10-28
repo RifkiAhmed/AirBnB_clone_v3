@@ -15,3 +15,13 @@ def get_places(city_id):
     if not city:
         abort(404)
     return jsonify([place.to_dict() for place in city.places])
+
+
+@app_views.route('/places/<place_id>', methods=['GET'])
+def get_place(place_id):
+    """retrieves a Place object"""
+    place = storage.get(Place, place_id)
+    if place:
+        return jsonify(place.to_dict())
+    else:
+        abort(404)
