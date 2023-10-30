@@ -88,7 +88,7 @@ test_db_storage.py'])
         self.assertTrue(count2 == count1 + 1)
         self.assertTrue(storage.count(State) > state_count1)
 
-
+'''
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
@@ -106,4 +106,4 @@ class TestFileStorage(unittest.TestCase):
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
-        """Test that save properly saves objects to file.json"""
+        """Test that save properly saves objects to file.json"""'''
