@@ -5,9 +5,10 @@ from models import storage
 from flask_cors import CORS
 from api.v1.views import app_views
 
-cors = CORS(app_views, resources={r"/*": {"origins": "0.0.0.0"}})
+
 app = Flask(__name__)
 app.register_blueprint(app_views)
+cors = CORS(app, resources={r"/api/v1/*": {"origins": "0.0.0.0"}})
 
 
 @app.errorhandler(404)
@@ -25,4 +26,4 @@ if __name__ == "__main__":
     from os import getenv
     host = getenv('HBNB_API_HOST') if getenv('HBNB_API_HOST') else '0.0.0.0'
     port = getenv('HBNB_API_PORT') if getenv('HBNB_API_PORT') else 5000
-    app.run(debug=True, host=host, port=port, threaded=True)
+    app.run(host=host, port=port, threaded=True)
