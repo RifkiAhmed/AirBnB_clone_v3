@@ -11,7 +11,7 @@ from models import storage
 @app_views.route(
         '/places_search', strict_slashes=False, methods=['POST'])
 def places_search():
-    """retrieves all Place objects depending of the JSON in the request body"""
+    """retrieves Place objects depending of the JSON in the request body"""
     try:
         data = request.get_json()
         if not data or not (
