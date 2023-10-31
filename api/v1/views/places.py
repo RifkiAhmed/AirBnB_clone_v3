@@ -9,48 +9,6 @@ from models import storage
 
 
 @app_views.route(
-        '/places_search', strict_slashes=False, methods=['POST'])
-def places_search():
-    """retrieves Place objects depending of the JSON in the request body"""
-    try:
-        data = request.get_json()
-        if not data or not (
-                data.get('states')
-                or data.get('cities')
-                or data.get('amenities')):
-            places = storage.all(Place)
-            return jsonify([place.to_dict() for place in places])
-        cities = []
-        places = []
-        if data.get('states'):
-            for state_id in data.get('states'):
-                state = storage.get(State, state_id)
-            if state:
-                cities += state.cities
-        if data.get('cities'):
-            for city_id in data.get('cities'):
-                city = storage.get(City, city_id)
-                if city and city not in cities:
-                    cities.append(city)
-        if cities:
-            for city in cities:
-                places += city.places
-        else:
-            places = storage.all(Place)
-        places_filtred = []
-        if data.get('amenities'):
-            for place in places:
-                for amenity in place.amenities:
-                    if amenity.id in data.get('amenities'):
-                        places_filtred.append(place)
-            return jsonify([place.to_dict() for place in places.filtred])
-        else:
-            return jsonify([place.to_dict() for place in places])
-    except Exception:
-        abort(400, description='Not a JSON')
-
-
-@app_views.route(
         '/cities/<city_id>/places', strict_slashes=False, methods=['GET'])
 def get_places(city_id):
     """retrieves the list of all Place objects related to a City object"""
