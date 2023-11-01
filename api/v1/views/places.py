@@ -15,8 +15,8 @@ def places_search():
     try:
         data = request.get_json()
         if not data and not (
-                data.get('states') or data.get('cities')
-                or data.get('amenities')):
+                data.get('states') or data.get('cities') or
+                data.get('amenities')):
             places = storage.all(Place)
             return jsonify([place.to_dict() for place in places])
         cities = []
